@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Project10.Models;
 
-namespace Lecture6.Services
+namespace Project10.Services
 {
     public interface IDbService
     {

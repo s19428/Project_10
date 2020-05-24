@@ -4,8 +4,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Lecture6.Helpers;
+using Project10.Models;
 
-namespace Lecture6.Services
+namespace Project10.Services
 {
     public class DbService : IDbService
     {
@@ -110,6 +111,11 @@ namespace Lecture6.Services
         {
             List<Student> _students = new List<Student>();
             
+            MasterContext mc = new MasterContext();
+            return mc.Student
+                        .OrderBy(s => s.FirstName)
+                        .ToList().AsEnumerable();
+
             //using (SqlConnection con = new SqlConnection(connectionString))
             //{
             //    using (var com = new SqlCommand("Select * From Student"))
@@ -129,8 +135,6 @@ namespace Lecture6.Services
             //        }
             //    }
             //}
-
-            return _students;
         }
 
         public Student GetStudentBy_IndexNumber(string IndexNumber)

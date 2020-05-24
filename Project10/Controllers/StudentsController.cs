@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lecture6.Services;
+using WebApplication1.DTOs.Requests;
+using Project10.Services;
+using Project10.Models;
 
-namespace Lecture6.Controllers
+namespace Lecture10.Controllers
 {
     [ApiController]
     [Route("api/students")]
@@ -36,51 +38,97 @@ namespace Lecture6.Controllers
         }
         */
 
-        private readonly IDbService _dbService;
+        //private readonly IDbService _dbService;
 
-        public StudentsController(IDbService dbService)
-        {
-            _dbService = dbService;
+        //public StudentsController(IDbService dbService)
+        //{
+        //    _dbService = dbService;
+        //}
+
+        public StudentsController()
+        { 
+            
         }
 
-        [HttpGet("{name}")]
-        public IActionResult GetStudent(string name)
+        [HttpGet]
+        public IActionResult GetStudents()
         {
-            //return $"Student1, Student2, Student3 orderBy = {orderBy}";
-            return Ok(_dbService.GetStudent(name));
+            MasterContext mc = new MasterContext();
+            return Ok(mc.Student
+                        .OrderBy(s => s.FirstName)
+                        .ToList());
         }
+
+        //[HttpGet("{name}")]
+        //public IActionResult GetStudent(string name)
+        //{
+        //    //return $"Student1, Student2, Student3 orderBy = {orderBy}";
+        //    //return Ok(_dbService.GetStudent(name));
+        //    return null;
+        //}
 
         //[Route("semesterEntries")]
-        [HttpGet("semesterEntries/{IndexNumber}")]
-        public IActionResult GetSemesterEntries(int IndexNumber)
-        {
-            //return Ok("" + IndexNumber);
-            return Ok(_dbService.GetSemesterEntries(IndexNumber));
-        }
+        //[HttpGet("semesterEntries/{IndexNumber}")]
+        //public IActionResult GetSemesterEntries(int IndexNumber)
+        //{
+        //    //return Ok("" + IndexNumber);
+        //    //return Ok(_dbService.GetSemesterEntries(IndexNumber));
+        //    return null;
+        //}
 
         [HttpPost]
         public IActionResult CreteStudent(Student student)
         {
-            student.IndexNumber = $"s{new Random().Next(0, 20000)}";
-            return Ok(student);
+            MasterContext mc = new MasterContext();
+            var exists = mc.Student.Find(student.IndexNumber);
+
+            if (exists == null)
+            {
+                mc.Student.Add(student);
+                return Ok(student);
+            }
+            else
+                return BadRequest("student already exists");
         }
 
-        [HttpPut]
-        public IActionResult PutStudent(int id)
+        [Route("modify")]
+        [HttpPost]
+        public IActionResult ModifyStudent(Student student)
         {
-            Student s = new Student();
-            s.StudentID = id;
-            //.......... Perform update of sth
+            MasterContext mc = new MasterContext();
+            var exists = mc.Student.Find(student.IndexNumber);
 
-            return Ok($"UpdateCompleted {id}");
+            if (exists == null)
+            {
+                mc.Student.Update(student);
+                return Ok("student updated");
+            }
+            else
+                return NotFound("student not found");
         }
 
         [HttpDelete]
         public IActionResult DeleteStudent(int id)
         {
-            // ............. delete student with wtis id
+            MasterContext mc = new MasterContext();
+            var exists = mc.Student.Find(id);
 
-            return Ok($"Student deleted {id}");
+            if (exists == null)
+            {
+                Student student = exists;
+                mc.Student.Remove(student);
+                return Ok($"student with Id = {id} deleted");
+            }
+            else
+                return NotFound("student not found");
+        }
+
+
+
+        [HttpPost("promote")]
+        public IActionResult PromoteStudents(PromoteStudentRequest request)
+        {
+            return null;
         }
     }
 }

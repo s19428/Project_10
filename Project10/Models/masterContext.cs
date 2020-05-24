@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Project10.Models
 {
-    public partial class masterContext : DbContext
+    public partial class MasterContext : DbContext
     {
-        public masterContext()
+        public MasterContext()
         {
         }
 
-        public masterContext(DbContextOptions<masterContext> options)
+        public MasterContext(DbContextOptions<MasterContext> options)
             : base(options)
         {
         }
